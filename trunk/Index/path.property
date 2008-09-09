@@ -1,0 +1,17 @@
+#
+save=E:/larbin/saveold
+#
+totallink=E:/larbin/totallink.txt
+#totallink = G:/totallinknew.txt
+#
+totalAT=E:/larbin/totalAnchorText.txt
+#totalAT=G:/totalAnchorText102new.txt
+#
+outAT=E:/larbin/outAnchorText.txt
+#
+inAT=E:/larbin/inAnchorText.txt
+#inAT=G:/inAnchorText.txt
+#
+index=E:/larbin/indexwithATdebug
+#
+pr=E:/larbin/pagerank3.txt
