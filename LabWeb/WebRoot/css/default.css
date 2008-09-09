@@ -1,0 +1,171 @@
+/*
+样式表语法 (CSS Syntax)
+Selector { property: value } 
+参数说明： 
+Selector -- 选择符
+property : value -- 样式表定义。属性和属性值之间用冒号(:)隔开。多个定义之间用分号(;)隔开
+*/
+body {
+	font-size: 14px;
+}
+
+h1 {
+	font-size: 32px;
+}
+
+h2 {
+	font-size: 23px;
+}
+
+/*
+E1 , E2 , E3 { sRules } 
+说明：
+选择符分组。将同样的定义应用于多个选择符，可以将选择符以逗号分隔的方式并为组。 
+*/
+p, ul, ol {
+	margin: 0 0 2em 0;
+	text-align: justify;
+	line-height: 26px;
+	font-size: 14px;
+}
+
+a:hover{
+	text-decoration: underline;
+}
+a:link
+{
+	text-decoration: none;
+}
+
+img {
+	border: none;
+}
+
+
+/* Content */
+/*
+#ID { sRules } 
+说明：
+ID选择符。以文档目录树(DOM)中作为对象的唯一标识符的 ID 作为选择符。
+*/
+#content {
+	float: left;
+	width: 600px;
+}
+
+#bar{
+	position:relative;
+	line-height:24px;
+	height:24px;
+	border-top:1px solid #3366CC;
+	background:lightcyan;
+}
+
+.f1
+{
+	font-size:16px;
+}
+
+.f2
+{
+	font-size:12px;
+}
+
+.t {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; BACKGROUND: #d5ddf3; PADDING-BOTTOM: 4px; COLOR: #000; PADDING-TOP: 5px
+}
+.bt {
+	BORDER-TOP: #36c 1px solid
+}
+#phone
+{
+	vertical-align:middle;	
+	font-size:14px;
+	float:left;
+	width:140px;
+	border:1px solid #3366CC;
+}
+
+/* leftnav */
+div#leftnav {
+	width: 132px;
+	position: absolute;
+	margin: 11px 0 0 8px;
+	padding: 0.15em 0 0 10px;
+	top: 69px;
+	left: 0;
+	font-size: 130%;
+}
+div#leftnav ul {
+	margin: 0 0 1em 0;
+	padding: 0 0 0.54em 0;
+	list-style-type: none;
+}
+div#leftnav ul li {
+	padding: 0 0 0.38em 0;
+  
+}
+div#leftnav p.app {
+	border:  dashed #ccc;
+	border-width: 1px 0;
+	padding: 5px 0 8px 0;
+}
+/* top */
+div#top {
+	height: 70px;
+	margin: 0 0 12px 0;
+}
+div#top img#logo {
+	float: left;
+	margin: 10px 0 0 15px;
+	display: inline;
+}
+div#top h1 {
+	margin: 0 12px 9px 170px;
+	padding: 28px 0 1px 0;
+	border-bottom: 1px solid #999;
+	font-size: 160%;
+	color: #666;
+}
+/* main */ 
+div#main {
+	margin: 0 12px 0 168px;
+	line-height: 1.4;
+	font-size: 130%;
+}
+body#columns div#main {
+	margin: 0 220px 0 168px;
+}
+div#main h2 {
+	font-size: 123%;
+	border: solid #CCC;
+	border-width: 0 0 1px 0;
+	padding:  0 0 0.1em 0;
+	margin: 0.6em 0;
+	color: #090;
+	clear: left;
+}
+div#main h3 {
+	color: #090;
+	clear: left;
+	padding: 0.6em 0 ;
+}
+div#main h4 {
+	font-size: 107%;
+	color: #000;
+	margin: 0;
+  padding: 0;
+}
+div#main h5 {
+	font-size: 100%;
+	padding: 0;
+}
+
+pre{
+width: 300px;
+white-space: pre-wrap; /* css-3 */
+white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
+white-space: -pre-wrap; /* Opera 4-6 */
+white-space: -o-pre-wrap; /* Opera 7 */
+word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
