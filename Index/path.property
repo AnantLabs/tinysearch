@@ -1,17 +1,14 @@
 #
-save=E:/larbin/saveold
+save=E:/larbin/test/save
 #
-totallink=E:/larbin/totallink.txt
-#totallink = G:/totallinknew.txt
+totallink=E:/larbin/test/totalLink.txt
 #
-totalAT=E:/larbin/totalAnchorText.txt
-#totalAT=G:/totalAnchorText102new.txt
+totalAT=E:/larbin/test/totalAnchorText.txt
 #
-outAT=E:/larbin/outAnchorText.txt
+inAT=E:/larbin/test/inAnchorText.txt
 #
-inAT=E:/larbin/inAnchorText.txt
-#inAT=G:/inAnchorText.txt
+index=E:/larbin/test/index
 #
-index=E:/larbin/indexwithATdebug
-#
-pr=E:/larbin/pagerank3.txt
+pr=E:/larbin/test/pageRank.txt
+# 
+linkmap=E:/larbin/test/linkMap.txt
