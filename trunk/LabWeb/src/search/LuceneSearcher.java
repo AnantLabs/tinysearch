@@ -40,7 +40,7 @@ public class LuceneSearcher extends AbstractSearcher {
 		reader = IndexReader.open(PATH);
 		searcher = new IndexSearcher(reader);
 		analyzer = new PaodingAnalyzer();
-		fields = new String[] { "CONTENT", "TITLE", "AnchorText" };
+		fields = new String[] {"CONTENT", "TITLE", "AnchorText", "META"};
 		flags = new BooleanClause.Occur[] { BooleanClause.Occur.SHOULD,
 				BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD };
 		format = new SimpleHTMLFormatter(START_HIGHLIGHT, END_HIGHLIGHT);
