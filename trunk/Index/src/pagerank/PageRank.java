@@ -3,7 +3,6 @@ package pagerank;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -43,8 +42,7 @@ public class PageRank {
 	public void computer(File srcfile, File destfile) throws IOException{
 
 		String[] linesarr;
-		Hashtable<String, Integer> docIDandNum = new Hashtable<String, Integer>(
-				100000);
+		Hashtable<String, Integer> docIDandNum = new Hashtable<String, Integer>(100000);
 		int total = 0;
 		int father, son;
 		int outdegree = 0;
@@ -78,7 +76,7 @@ public class PageRank {
 
 			// 进行10次迭代
 			for (int iterator = 0; iterator < 10; iterator++) {
-				long startTime = System.currentTimeMillis();
+//				long startTime = System.currentTimeMillis();
 				double sum = 0.0D;
 				linkinput = new BufferedReader(new FileReader(srcfile));
 				line = linkinput.readLine();
@@ -125,17 +123,16 @@ public class PageRank {
 				for (int i = 1; i <= total; ++i) {
 					// 归一化链接数
 					prTmp[i] = prTmp[i] / Math.sqrt(sum);
-					prTmp[i] = 0.15D + alpha * prTmp[i]; // PR公式2 prTmp[i] = 0.15D / total + alpha * prTmp[i]; 
+					prTmp[i] = 0.15D + alpha * prTmp[i]; 
+					// PR公式2 prTmp[i] = 0.15D / total + alpha * prTmp[i]; 
 					pageRank[i] = prTmp[i]; // 下次迭代的初始值
 					prTmp[i] = 0.0D;
 				}
 				linkinput.close();
-
-				System.out.println("第" + iterator + "次迭代耗时"
-						+ (System.currentTimeMillis() - startTime) + "ms");
+				System.out.println("第" + (iterator+1) + "次迭代完成");
+//				+ "，耗时" + (System.currentTimeMillis() - startTime) + "ms");
 			}
 
-			// ====2008.8.29新增====
 			//增加PR值与docid的对应关系
 			Hashtable<Integer, String> num2Docid = new Hashtable<Integer, String>();
 			Iterator it = docIDandNum.entrySet().iterator();
@@ -145,17 +142,11 @@ public class PageRank {
 						.getKey());
 			}
 			docIDandNum = null;
-			// ====2008.8.29新增====
-
 			//最终PR值输出至文件
 			BufferedWriter newlink = new BufferedWriter(new FileWriter(destfile));
 			for (int i = 1; i <= total; ++i) {
-
-				// ====2008.8.29新增====
 				newlink.write(num2Docid.get(new Integer(i)));
 				newlink.write(" ");
-				// ====2008.8.29新增====
-
 				newlink.write(String.valueOf(pageRank[i]));
 				newlink.newLine();
 			}
@@ -163,15 +154,12 @@ public class PageRank {
 			newlink.close();
 			pageRank = null;
 			prTmp = null;
-
-			// ====2008.8.29新增====
 			num2Docid = null;
-			// ====2008.8.29新增====
 		}		
 	}
 
-	public static void main(String[] args) throws Exception {
-		PageRank pr = new PageRank();
-		pr.computer("G:/linkmapbak.txt", "G:/pagerank.txt");
-	}
+//	public static void main(String[] args) throws Exception {
+//		PageRank pr = new PageRank();
+//		pr.computer("G:/linkmapbak.txt", "G:/pagerank.txt");
+//	}
 }
