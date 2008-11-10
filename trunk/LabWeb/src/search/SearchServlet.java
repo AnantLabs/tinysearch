@@ -56,7 +56,7 @@ public class SearchServlet extends HttpServlet {
 			}
 			if (query == null || query.length() == 0) {
 				RequestDispatcher dispatcher = request
-				.getRequestDispatcher("index.jsp");
+						.getRequestDispatcher("index.jsp");
 
 				dispatcher.forward(request, response);
 				return;

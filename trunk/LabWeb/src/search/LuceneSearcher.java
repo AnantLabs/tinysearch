@@ -1,16 +1,20 @@
 package search;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+
 import net.paoding.analysis.analyzer.PaodingAnalyzer;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermPositionVector;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Hits;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -18,11 +22,14 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.function.CustomScoreQuery;
 import org.apache.lucene.search.function.FieldScoreQuery;
+import org.apache.lucene.search.function.ValueSourceQuery;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleFragmenter;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.search.highlight.TokenSources;
+import org.mira.lucene.analysis.IK_CAnalyzer;
+import org.mira.lucene.analysis.MIK_CAnalyzer;
 
 /**
  * search的具体实现类
@@ -30,6 +37,17 @@ import org.apache.lucene.search.highlight.TokenSources;
 public class LuceneSearcher extends AbstractSearcher {
 
 	public static String PATH = "";
+
+	private static AbstractSearcher instance;
+	private int totalCount, totalPage;
+	private String searchword;
+	private IndexReader reader;
+	private IndexSearcher searcher;
+	private Analyzer analyzer, maxLengthAnalyzer;
+	// highlight
+	private String[] fields;
+	private BooleanClause.Occur[] flags;
+	private SimpleHTMLFormatter format;
 
 	/**
 	 * 构造函数
@@ -39,11 +57,19 @@ public class LuceneSearcher extends AbstractSearcher {
 	public LuceneSearcher() throws Exception {
 		reader = IndexReader.open(PATH);
 		searcher = new IndexSearcher(reader);
+
 		analyzer = new PaodingAnalyzer();
-		fields = new String[] {"CONTENT", "TITLE", "AnchorText", "META"};
+		// analyzer = new MMAnalyzer();
+		// analyzer = new IK_CAnalyzer();
+		maxLengthAnalyzer = new MIK_CAnalyzer(); // 正向最大长度匹配分词
+
+		fields = new String[] { "CONTENT", "TITLE", "AnchorText", "META" };
+		// fields = new String[] {"CONTENT", "TITLE", "AnchorText"};
 		flags = new BooleanClause.Occur[] { BooleanClause.Occur.SHOULD,
 				BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD,
-				BooleanClause.Occur.SHOULD};
+				BooleanClause.Occur.SHOULD };
+		// flags = new BooleanClause.Occur[] { BooleanClause.Occur.SHOULD,
+		// BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};
 		format = new SimpleHTMLFormatter(START_HIGHLIGHT, END_HIGHLIGHT);
 	}
 
@@ -75,22 +101,18 @@ public class LuceneSearcher extends AbstractSearcher {
 	 * @return String
 	 * @throws IOException
 	 */
-	public String getSnippet(Query query, int docId, String text) {
+	public String getSnippet(Query query, int docId, String text)
+			throws IOException {
 		QueryScorer scorer = new QueryScorer(query);
 		Highlighter highlighter = new Highlighter(format, scorer);
 		highlighter.setTextFragmenter(new SimpleFragmenter(30));
 		TokenStream tokenStream;
 		String snippet = "";
-		try {
-			TermPositionVector tpv = (TermPositionVector) reader.getTermFreqVector(
-					docId, "CONTENT");
-			if (tpv != null) {
-			tokenStream = TokenSources.getTokenStream(tpv);		
+		TermPositionVector tpv = (TermPositionVector) reader.getTermFreqVector(
+				docId, "CONTENT");
+		if (tpv != null) {
+			tokenStream = TokenSources.getTokenStream(tpv);
 			snippet = highlighter.getBestFragments(tokenStream, text, 3, "...");
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		return snippet;
 	}
@@ -103,21 +125,66 @@ public class LuceneSearcher extends AbstractSearcher {
 	public List<QueryResult> search(String queryStr, int currentPage,
 			int pageSize) throws Exception {
 		this.searchword = queryStr;
+
+		BooleanQuery bq = new BooleanQuery();
+
+		TokenStream stream = maxLengthAnalyzer.tokenStream(null,
+				new StringReader(queryStr));
+		ArrayList<Token> tokenList = new ArrayList<Token>();
+		while (true) {
+			Token token = stream.next();
+			if (token == null)
+				break;
+			tokenList.add(token);
+		}
+		Token[] tokens = (Token[]) tokenList.toArray(new Token[0]); // tokens为query的term数组
+		int tokenslength = tokens.length; // tokenslength为query的term数组长度
+		int j;
+		for (int i = 0; i < tokenslength; i++) {
+			j = ((i + 1) < (tokenslength - 1)) ? (i + 1) : i;
+			Token token = tokens[i];
+			Query q = MultiFieldQueryParser.parse(token.termText(), fields,
+					flags, analyzer);
+			bq.add(q, BooleanClause.Occur.SHOULD);
+			if (j > i) {
+				q = MultiFieldQueryParser.parse(tokens[i].termText()
+						+ tokens[j].termText(), fields, flags, analyzer);
+				bq.add(q, BooleanClause.Occur.SHOULD);
+			}
+		}
 		Query query = MultiFieldQueryParser.parse(queryStr, fields, flags,
 				analyzer);
+		bq.add(query, BooleanClause.Occur.SHOULD);
+		System.out.println(bq.toString());
+
 		// 结合PR值查询
 		FieldScoreQuery qf = new FieldScoreQuery("PR",
 				FieldScoreQuery.Type.FLOAT);
-		CustomScoreQuery customQ = new PageRankCustomScoreQuery(query, qf);
+
+		// 结合Proximity
+		// ProximityValueSourceQuery proximity = new
+		// ProximityValueSourceQuery(queryStr, "CONTENT");
+		// System.out.println(proximity.toString());
+
+		// ValueSourceQuery[] vq = new ValueSourceQuery[]{qf, proximity};
+		// System.out.println(vq.toString());
+
+		// CustomScoreQuery customQ = new PageRankCustomScoreQuery(query, qf);
+		// CustomScoreQuery customQ = new PageRankCustomScoreQuery(query,
+		// proximity);
+
+		// CustomScoreQuery customQ = new TotalCustomScoreQuery(query, qf);
+		// CustomScoreQuery customQ = new TotalCustomScoreQuery(query,
+		// proximity);
+		// CustomScoreQuery customQ = new TotalCustomScoreQuery(query, vq);
+
+		CustomScoreQuery customQ = new TotalCustomScoreQuery(bq, qf);
 
 		// Hits hits = searcher.search(query);
 		Hits hits = searcher.search(customQ);
 
-		if (hits == null) {
-			this.totalCount = 0;
-		} else {
-			this.totalCount = hits.length();
-		}
+		this.totalCount = (hits == null) ? 0 : hits.length();
+
 		// 结果页总数(注意余数)
 		totalPage = totalCount / pageSize + (totalCount % pageSize > 0 ? 1 : 0);
 		// 当前页,即要显示的页序号 (当页序号大于页总数时，返回最后一页。)
@@ -126,9 +193,8 @@ public class LuceneSearcher extends AbstractSearcher {
 		int startPos = Math.max((currentPage - 1) * pageSize, 0);
 		// 结尾记录序号 (不能大于记录总数)
 		int endPos = Math.min(currentPage * pageSize - 1, totalCount - 1);
+		endPos = (endPos >= totalCount) ? totalCount - 1 : endPos;
 
-		if (endPos >= totalCount)
-			endPos = totalCount - 1;
 		List<QueryResult> results = new ArrayList<QueryResult>();
 		for (int i = startPos; i <= endPos; i++) {
 			Document doc = hits.doc(i);
@@ -137,8 +203,8 @@ public class LuceneSearcher extends AbstractSearcher {
 			String title = doc.get("TITLE");
 			String url = doc.get("URL");
 			/* prepare for snippet */
-//			QueryResult result = new QueryResult(id, getSnippet(query, hits
-//					.id(i), text), title, url);
+			// QueryResult result = new QueryResult(id, getSnippet(query, hits
+			// .id(i), text), title, url);
 			QueryResult result = new QueryResult(id, getSnippet(customQ, hits
 					.id(i), text), title, url);
 			results.add(result);
@@ -279,14 +345,4 @@ public class LuceneSearcher extends AbstractSearcher {
 		debug(LuceneSearcher.getInstance());
 	}
 
-	private static AbstractSearcher instance;
-	private int totalCount, totalPage;
-	private String searchword;
-	private IndexReader reader;
-	private IndexSearcher searcher;
-	private Analyzer analyzer;
-	// highlight
-	private String[] fields;
-	private BooleanClause.Occur[] flags;
-	private SimpleHTMLFormatter format;
 }
