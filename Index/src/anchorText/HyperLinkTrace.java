@@ -25,40 +25,41 @@ import Single.Utils;
 
 public class HyperLinkTrace {
 	private BufferedWriter totalAnchorText;
-	private Hashtable<String, String> hash = new Hashtable<String, String>(180000);
+	private Hashtable<String, String> hash = new Hashtable<String, String>(
+			180000);
 
 	public void init(String totalAT) throws IOException {
 		totalAnchorText = new BufferedWriter(new FileWriter(new File(totalAT)));
 	}
-	
-	public void close() throws IOException{
+
+	public void close() throws IOException {
 		totalAnchorText.close();
 		hash.clear();
 		hash = null;
 	}
-	
-//	public static void main(String[] args) throws Exception {
-//		HyperLinkTrace hlt = new HyperLinkTrace();
-//		hlt.init();
-//		File save = new File(source);
-//		int dirnum = 0;
-//		String[] subdirs = null;
-//		if (save.isDirectory()) {
-//			subdirs = save.list();
-//			Arrays.sort(subdirs);
-//			dirnum = subdirs.length;
-//		}
-//		long startTime = System.currentTimeMillis();
-//		for (int i = 0; i < dirnum; i++) {
-//			hlt.getAnchorText(source + "/" + subdirs[i].toString());
-//		}
-//		totalAnchorText.close();
-//		hash.clear();
-//		hash = null;
-//		long endTime = System.currentTimeMillis();
-//		System.out.println("耗时" + (endTime - startTime) + "ms");
-//
-//	}
+
+	// public static void main(String[] args) throws Exception {
+	// HyperLinkTrace hlt = new HyperLinkTrace();
+	// hlt.init();
+	// File save = new File(source);
+	// int dirnum = 0;
+	// String[] subdirs = null;
+	// if (save.isDirectory()) {
+	// subdirs = save.list();
+	// Arrays.sort(subdirs);
+	// dirnum = subdirs.length;
+	// }
+	// long startTime = System.currentTimeMillis();
+	// for (int i = 0; i < dirnum; i++) {
+	// hlt.getAnchorText(source + "/" + subdirs[i].toString());
+	// }
+	// totalAnchorText.close();
+	// hash.clear();
+	// hash = null;
+	// long endTime = System.currentTimeMillis();
+	// System.out.println("耗时" + (endTime - startTime) + "ms");
+	//
+	// }
 
 	public void getAnchorText(String dir) throws IOException, ParserException {
 
@@ -78,9 +79,8 @@ public class HyperLinkTrace {
 				if (j >= subdirsarr[i].length())
 					j = subdirsarr[i].length() - 1;
 				String htmlnum = subdirsarr[i].substring(j);
-				addAnchorText(
-						new File(subdir, subdirsarr[i]), 
-						parsent + "-" + htmlnum);
+				addAnchorText(new File(subdir, subdirsarr[i]), parsent + "-"
+						+ htmlnum);
 			}
 			subdirsarr = null;
 			subdir = null;
@@ -91,27 +91,28 @@ public class HyperLinkTrace {
 	public void hashinput(String totallinkfile) throws IOException {
 		String[] linesarr;
 		File linkfile = new File(totallinkfile);
-		BufferedReader linkinput = new BufferedReader(
-				new FileReader(linkfile));
+		BufferedReader linkinput = new BufferedReader(new FileReader(linkfile));
 		String line;
-		while ((line = linkinput.readLine())!= null) {
+		while ((line = linkinput.readLine()) != null) {
 			linesarr = line.split(" ");
-			if(hash.containsKey(linesarr[0]) &&
-					hash.containsValue(linesarr[1]))
+			if (hash.containsKey(linesarr[0])
+					&& hash.containsValue(linesarr[1]))
 				continue;
 			hash.put(linesarr[0], linesarr[1]);
 		}
 		linkinput.close();
 	}
 
-	private void addAnchorText(File html, String htmlnum) throws IOException, ParserException{
+	private void addAnchorText(File html, String htmlnum) throws IOException,
+			ParserException {
 		URL sjtu, url;
 		String charsetname;
 		Utils tool = new Utils();
 		Parser parser = new Parser();
-		
+
 		Charset charset = tool.autoDetectCharset(html.toURL());
-		charsetname = (charset.name().toLowerCase().equals("big5")) ? "GB2312" : charset.name();
+		charsetname = (charset.name().toLowerCase().equals("big5")) ? "GB2312"
+				: charset.name();
 		parser.setEncoding(charsetname);
 		parser.setInputHTML(tool.readTextFile(html, charsetname));
 		NodeList nlist = parser.extractAllNodesThatMatch(new NodeFilter() {
@@ -133,15 +134,18 @@ public class HyperLinkTrace {
 					if (linkUrl.contains("#"))
 						linkUrl = linkUrl.substring(0, linkUrl.indexOf('#'));
 					// 如果link不是.sjtu.edu.cn的url，则过滤 这里需要做改进
-					if (linkUrl.startsWith("http://")) {						
-						if (!domainfilter(linkUrl)) continue;
+					if (linkUrl.startsWith("http://")) {
+						if (!domainfilter(linkUrl))
+							continue;
 					} else {
-						if (urlfilter(linkUrl)) continue;
+						if (urlfilter(linkUrl))
+							continue;
 					}
 					try {
 						if (hash.containsKey(htmlnum)) {
 							String htmlurl = hash.get(htmlnum);
-							sjtu = new URL(htmlurl.substring(0, htmlurl.lastIndexOf('/')));
+							sjtu = new URL(htmlurl.substring(0, htmlurl
+									.lastIndexOf('/')));
 							url = new URL(sjtu, linkUrl);
 						} else {
 							url = null;
@@ -149,7 +153,7 @@ public class HyperLinkTrace {
 					} catch (MalformedURLException e) {
 						continue;
 					}
-					if(url != null){
+					if (url != null) {
 						// 保存anchor text至totalAnchorText文件
 						StringBuffer sb = new StringBuffer();
 						sb.append(url.toString()).append(' ').append(linkText);
@@ -159,7 +163,7 @@ public class HyperLinkTrace {
 						linkText = null;
 						linkUrl = null;
 						sjtu = null;
-						url = null;						
+						url = null;
 					}
 				}
 			}
@@ -169,13 +173,13 @@ public class HyperLinkTrace {
 		parser = null;
 	}
 
-	private boolean domainfilter(String domain){
-		if (domain.contains(".sjtu.edu.cn")
-				|| domain.contains("202.120.33.84")
+	private boolean domainfilter(String domain) {
+		if (domain.contains(".sjtu.edu.cn") || domain.contains("202.120.33.84")
 				|| domain.contains(".sjtu.org"))
 			return true;
 		return false;
 	}
+
 	/**
 	 * URL过滤 .tar .gz .tgz .zip .Z .rpm .deb .rar .ps .dvi .pdf .png .jpg .jpeg
 	 * .bmp .smi .tiff .gif .mov .avi .mpeg .mpg .mp3 .qt .wav .ram .rm .rmvb
@@ -183,8 +187,8 @@ public class HyperLinkTrace {
 	 * .psd .css .js
 	 */
 	private boolean urlfilter(String linkUrl) {
-		if (linkUrl.contains("mailto:") || linkUrl.contains("@") || 
-				linkUrl.contains("jsessionid")) {
+		if (linkUrl.contains("mailto:") || linkUrl.contains("@")
+				|| linkUrl.contains("jsessionid")) {
 			return true;
 		}
 		if (linkUrl.contains("javascript:") || linkUrl.contains("ftp:")) {
