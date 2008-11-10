@@ -3,5 +3,6 @@ lucenePRField=E:/larbin/indexnew
 lucene=E:/larbin/indexSetBoost
 #indexwithat=E:/larbin/indexwithAT
 #indexwithat=E:/larbin/indexwithAT2f
+#index=F:/larbin2/index
 index=F:/index
 indexwithat20=E:/larbin/indexwithAT20f
