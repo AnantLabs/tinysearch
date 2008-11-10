@@ -17,24 +17,35 @@ package org.apache.lucene.util;
  * limitations under the License.
  */
 
-import org.apache.lucene.util.LuceneTestCase;
+/**
+ * Methods for manipulating strings.
+ * 
+ * $Id: StringHelper.java 472959 2006-11-09 16:21:50Z yonik $
+ */
+public abstract class StringHelper {
 
-public class TestStringHelper extends LuceneTestCase {
+	/**
+	 * Compares two strings, character by character, and returns the first
+	 * position where the two strings differ from one another.
+	 * 
+	 * @param s1
+	 *            The first string to compare
+	 * @param s2
+	 *            The second string to compare
+	 * @return The first position where the two strings differ.
+	 */
+	public static final int stringDifference(String s1, String s2) {
+		int len1 = s1.length();
+		int len2 = s2.length();
+		int len = len1 < len2 ? len1 : len2;
+		for (int i = 0; i < len; i++) {
+			if (s1.charAt(i) != s2.charAt(i)) {
+				return i;
+			}
+		}
+		return len;
+	}
 
-
-  public void testStringDifference() {
-    String test1 = "test";
-    String test2 = "testing";
-    
-    int result = StringHelper.stringDifference(test1, test2);
-    assertTrue(result == 4);
-    
-    test2 = "foo";
-    result = StringHelper.stringDifference(test1, test2);
-    assertTrue(result == 0);
-    
-    test2 = "test";
-    result = StringHelper.stringDifference(test1, test2);
-    assertTrue(result == 4);
-  }
+	private StringHelper() {
+	}
 }
