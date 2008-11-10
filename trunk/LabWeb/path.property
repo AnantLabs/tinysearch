@@ -1,0 +1,14 @@
+#
+save=F:/larbin2/save
+#
+totallink=F:/larbin2/totalLink.txt
+#
+totalAT=F:/larbin2/totalAnchorText.txt
+#
+inAT=F:/larbin2/inAnchorText.txt
+#
+index=F:/larbin2/indextest
+#
+pr=F:/larbin2/pageRank.txt
+# 
+linkmap=F:/larbin2/linkMap.txt
