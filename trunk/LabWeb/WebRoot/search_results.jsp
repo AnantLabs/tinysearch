@@ -6,7 +6,7 @@
 	int minSize = luceneResults.size();	
 	String searchWord = (String)request.getAttribute("query");
 %>
-	<title>搜搜_<%=searchWord%></title>
+	<title>搜索结果：<%=searchWord%></title>
     <link href="css/default.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,7 +15,7 @@
 	<tbody>
 	      <tr>
 		  		<td style="width: 110px;" valign="top">
-					<a href="#"><img src="image/tiny.png" border="0" /></a>&nbsp;&nbsp;
+					<a href="http://localhost:8080"><img src="image/tiny.png" border="0" /></a>&nbsp;&nbsp;
 				</td>
 				<td>
 					<form id="searchForm" action="search">
@@ -27,7 +27,7 @@
 	</tbody>
 </table>
 <table class="t bt" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-	<tr >
+	<tr class="f3">
 	<td align="left" nowrap="nowrap">网页搜索</td>
 	<td align="right" nowrap="nowrap">
 		<%
@@ -38,19 +38,17 @@
 		  String searchTime = (String)request.getAttribute("searchTime");
 		  if (totalCount > 0)
 		  {
-			  Integer totalPage = (Integer)request.getAttribute("totalPage");
+			  // Integer totalPage = (Integer)request.getAttribute("totalPage");
 			  Integer currentPage = (Integer)request.getAttribute("currentPage");
 			  int startPos = Math.max((currentPage - 1) * 10, 0) + 1;
 			  int endPos = Math.min(currentPage * 10 - 1, totalCount - 1) + 1;
+			  // 共<b> =totalPage </b>页，
 		%>
-		约有<b><%=totalCount %></b>项符合<b><%=searchWord %></b>的查询结果，
-		以下是第<b><%=startPos %></b> - <b><%=endPos %></b>项，
-		共<b><%=totalPage %></b>页，
-		搜索用时<b><%=searchTime %></b>秒			 
+		约有<b><%=totalCount %></b>项符合<b><%=searchWord %></b>的查询结果,以下是第<b><%=startPos %></b> - <b><%=endPos %></b>项,搜索用时<b><%=searchTime %></b>秒			 
 		</td>
 	</tr>
 </table>
-	  <%	  showpage = (String)request.getAttribute("showpage");	%>
+	  <% showpage = (String)request.getAttribute("showpage");	%>
 <table>
 	<% 
 		for (int i = 0; i < minSize; ++i) { 
@@ -58,12 +56,14 @@
 	%>
 	<tr>
 		<td>
-			<table style="width: 600px; table-layout: fixed;" border="0"><tbody>
+			<table style="width: 800px; table-layout: fixed;" border="0">
+			<tbody>
 				<tr>
 					<td class="f2">
 						<a class="f1" href="<%=luceneResult.getUrl()%>" target="_blank" style="text-decoration: underline;" title="<%=luceneResult.getTitle()%>"><%=luceneResult.getTitle()%></a>
 						<br><%=luceneResult.getSnippet()%>
-						<br><font color="green"><%=luceneResult.getUrl()%></font>  [<a href="<%=luceneResult.getUrl()%>" target="_blank" style="color: rgb(102, 102, 102);">链接</a>]</td>
+						<br><font color="green"><%=luceneResult.getUrl()%></font>  [<a href="<%=luceneResult.getUrl()%>" target="_blank" style="color: rgb(102, 102, 102);">链接</a>]
+					</td>
 				</tr>
 			</tbody>
 			</table>

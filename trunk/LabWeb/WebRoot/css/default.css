@@ -29,11 +29,10 @@ p, ul, ol {
 	font-size: 14px;
 }
 
-a:hover{
+a:hover {
 	text-decoration: underline;
 }
-a:link
-{
+a:link {
 	text-decoration: none;
 }
 
@@ -46,14 +45,14 @@ img {
 /*
 #ID { sRules } 
 说明：
-ID选择符。以文档目录树(DOM)中作为对象的唯一标识符的 ID 作为选择符。
+ID选择符。以文档目录树(DOM)中对象的唯一标识符(ID)作为选择符。
 */
 #content {
 	float: left;
 	width: 600px;
 }
 
-#bar{
+#bar {
 	position:relative;
 	line-height:24px;
 	height:24px;
@@ -61,14 +60,24 @@ ID选择符。以文档目录树(DOM)中作为对象的唯一标识符的 ID 作为选择符。
 	background:lightcyan;
 }
 
-.f1
-{
-	font-size:16px;
+#phone {
+	vertical-align:middle;	
+	font-size:14px;
+	float:left;
+	width:140px;
+	border:1px solid #3366CC;
 }
 
-.f2
-{
-	font-size:12px;
+.f1 {
+	font-size:18px;
+}
+
+.f2 {
+	font-size:14px;
+}
+
+.f3 {
+	font-size:14px;
 }
 
 .t {
@@ -77,14 +86,7 @@ ID选择符。以文档目录树(DOM)中作为对象的唯一标识符的 ID 作为选择符。
 .bt {
 	BORDER-TOP: #36c 1px solid
 }
-#phone
-{
-	vertical-align:middle;	
-	font-size:14px;
-	float:left;
-	width:140px;
-	border:1px solid #3366CC;
-}
+
 
 /* leftnav */
 div#leftnav {
@@ -110,6 +112,7 @@ div#leftnav p.app {
 	border-width: 1px 0;
 	padding: 5px 0 8px 0;
 }
+
 /* top */
 div#top {
 	height: 70px;
@@ -160,7 +163,6 @@ div#main h5 {
 	font-size: 100%;
 	padding: 0;
 }
-
 pre{
 width: 300px;
 white-space: pre-wrap; /* css-3 */
