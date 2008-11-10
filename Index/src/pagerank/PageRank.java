@@ -11,38 +11,40 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 /**
- * PR值计算及归一化
- *  linkmaptest.txt内容为
- *   d00000-0 d00000-0 d00000-1 d00000-2
- *   d00000-1 d00000-2 d00000-1
- *   d00000-2 d00000-0
- *   d00000-3 
+ * PR值计算及归一化 linkmaptest.txt内容为 d00000-0 d00000-0 d00000-1 d00000-2 d00000-1
+ * d00000-2 d00000-1 d00000-2 d00000-0 d00000-3
+ * 
  * @author cc512
- *
+ * 
  */
 public class PageRank {
 	/**
 	 * 
-	 * @param src 输入文件地址
-	 * @param dest 输出文件地址
-	 * @throws IOException 
+	 * @param src
+	 *            输入文件地址
+	 * @param dest
+	 *            输出文件地址
+	 * @throws IOException
 	 */
-	public void computer(String src, String dest) throws IOException{
+	public void computer(String src, String dest) throws IOException {
 		File srcFile = new File(src);
 		File destFile = new File(dest);
 		computer(srcFile, destFile);
 	}
-	
+
 	/**
 	 * 
-	 * @param srcfile 输入文件linkmap文件
-	 * @param destfile 输出文件pagerank文件
-	 * @throws IOException 
+	 * @param srcfile
+	 *            输入文件linkmap文件
+	 * @param destfile
+	 *            输出文件pagerank文件
+	 * @throws IOException
 	 */
-	public void computer(File srcfile, File destfile) throws IOException{
+	public void computer(File srcfile, File destfile) throws IOException {
 
 		String[] linesarr;
-		Hashtable<String, Integer> docIDandNum = new Hashtable<String, Integer>(100000);
+		Hashtable<String, Integer> docIDandNum = new Hashtable<String, Integer>(
+				100000);
 		int total = 0;
 		int father, son;
 		int outdegree = 0;
@@ -76,7 +78,7 @@ public class PageRank {
 
 			// 进行10次迭代
 			for (int iterator = 0; iterator < 10; iterator++) {
-//				long startTime = System.currentTimeMillis();
+				// long startTime = System.currentTimeMillis();
 				double sum = 0.0D;
 				linkinput = new BufferedReader(new FileReader(srcfile));
 				line = linkinput.readLine();
@@ -112,9 +114,8 @@ public class PageRank {
 					line = linkinput.readLine();
 				}
 				/*
-				 * 归一化公式1 a = TFi/ MaxTF
-				 * 归一化公式2 0.5 + 0.5 * a
-				 * 归一化公式3 TF / Math.sqrt(sum(TFi * TFi)) 采用公式3
+				 * 归一化公式1 a = TFi/ MaxTF 归一化公式2 0.5 + 0.5 * a 归一化公式3 TF /
+				 * Math.sqrt(sum(TFi * TFi)) 采用公式3
 				 */
 				for (int i = 1; i <= total; ++i) {
 					sum += prTmp[i] * prTmp[i];
@@ -123,17 +124,17 @@ public class PageRank {
 				for (int i = 1; i <= total; ++i) {
 					// 归一化链接数
 					prTmp[i] = prTmp[i] / Math.sqrt(sum);
-					prTmp[i] = 0.15D + alpha * prTmp[i]; 
-					// PR公式2 prTmp[i] = 0.15D / total + alpha * prTmp[i]; 
+					prTmp[i] = 0.15D + alpha * prTmp[i];
+					// PR公式2 prTmp[i] = 0.15D / total + alpha * prTmp[i];
 					pageRank[i] = prTmp[i]; // 下次迭代的初始值
 					prTmp[i] = 0.0D;
 				}
 				linkinput.close();
-				System.out.println("第" + (iterator+1) + "次迭代完成");
-//				+ "，耗时" + (System.currentTimeMillis() - startTime) + "ms");
+				System.out.println("第" + (iterator + 1) + "次迭代完成");
+				// + "，耗时" + (System.currentTimeMillis() - startTime) + "ms");
 			}
 
-			//增加PR值与docid的对应关系
+			// 增加PR值与docid的对应关系
 			Hashtable<Integer, String> num2Docid = new Hashtable<Integer, String>();
 			Iterator it = docIDandNum.entrySet().iterator();
 			while (it.hasNext()) {
@@ -142,8 +143,9 @@ public class PageRank {
 						.getKey());
 			}
 			docIDandNum = null;
-			//最终PR值输出至文件
-			BufferedWriter newlink = new BufferedWriter(new FileWriter(destfile));
+			// 最终PR值输出至文件
+			BufferedWriter newlink = new BufferedWriter(
+					new FileWriter(destfile));
 			for (int i = 1; i <= total; ++i) {
 				newlink.write(num2Docid.get(new Integer(i)));
 				newlink.write(" ");
@@ -155,11 +157,11 @@ public class PageRank {
 			pageRank = null;
 			prTmp = null;
 			num2Docid = null;
-		}		
+		}
 	}
 
-//	public static void main(String[] args) throws Exception {
-//		PageRank pr = new PageRank();
-//		pr.computer("G:/linkmapbak.txt", "G:/pagerank.txt");
-//	}
+	// public static void main(String[] args) throws Exception {
+	// PageRank pr = new PageRank();
+	// pr.computer("G:/linkmapbak.txt", "G:/pagerank.txt");
+	// }
 }
