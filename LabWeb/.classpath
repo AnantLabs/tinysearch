@@ -2,11 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="com.genuitec.eclipse.j2eedt.core.J2EE14_CONTAINER"/>
 	<classpathentry kind="lib" path="G:/jar/commons-logging.jar"/>
 	<classpathentry kind="lib" path="G:/jar/htmlparser.jar"/>
 	<classpathentry kind="lib" path="G:/jar/paoding-analysis.jar"/>
 	<classpathentry kind="lib" path="G:/jar/lucene-core-2.3.2.jar"/>
 	<classpathentry kind="lib" path="G:/jar/lucene-highlighter-2.3.2.jar"/>
+	<classpathentry kind="lib" path="G:/jar/servlet-api.jar"/>
+	<classpathentry kind="lib" path="G:/jar/cpdetector_1.0.6.jar"/>
 	<classpathentry kind="output" path="WebRoot/WEB-INF/classes"/>
 </classpath>
