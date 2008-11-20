@@ -391,7 +391,7 @@ public class Dictionary {
 					theWord = theWord.trim();
 					this.hsNoise.add(theWord);
 					/*Test Logging*/
-					//System.out.println(theWord);
+//					System.out.println(theWord);
 				}
 			} while (theWord != null);
 		} catch (IOException ioe) {
